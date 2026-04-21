@@ -1,0 +1,34 @@
+query Input {
+  cart {
+    cost {
+      subtotalAmount {
+        amount
+      }
+    }
+    deliveryGroups {
+      id
+      deliveryOptions {
+        handle
+        cost {
+          amount
+        }
+      }
+    }
+   buyerIdentity {
+      customer {
+        id
+        hasTags(tags: [
+          "tier: Activist"
+        ]) {
+          tag
+          hasTag
+        }
+      }
+    }
+  }
+  discount {
+    metafield(namespace: "$app", key: "free-shipping-activist-level") {
+      jsonValue
+    }
+  }
+}
