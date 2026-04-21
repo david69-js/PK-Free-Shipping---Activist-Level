@@ -1,0 +1,23 @@
+query Input {
+  cart {
+    buyerIdentity {
+      customer {
+        hasTags(tags: ["tier: Activist"]) {
+          tag
+          hasTag
+        }
+      }
+    }
+    deliveryGroups {
+      deliveryOptions {
+        handle
+        title
+      }
+    }
+  }
+  deliveryCustomization {
+    metafield(namespace: "$app", key: "free-shipping-activist-level") {
+      jsonValue
+    }
+  }
+}

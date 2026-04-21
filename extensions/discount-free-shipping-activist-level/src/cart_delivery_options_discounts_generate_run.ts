@@ -33,16 +33,12 @@ export function cartDeliveryOptionsDiscountsGenerateRun(
   const customer = input.cart.buyerIdentity?.customer;
   const hasTags = customer?.hasTags ?? [];
 
-  // Find the first active VIP tier tag the customer has (any hasTag === true)
   const activeTag = hasTags.find(t => t.hasTag === true);
 
   if (!activeTag) {
-    // Customer is not logged in or has none of the VIP tier tags
     return {operations: []};
   }
 
-  // Look up the discount % for this specific tag from the metafield config.
-  // Falls back to 100% (full free shipping) if no tier config is found — matching the Ruby logic.
   const matchingTier = tiers.find(tier => tier.customerTag === activeTag.tag);
   const discountPercent = matchingTier?.shippingDiscountPercent ?? 100;
 
@@ -50,16 +46,18 @@ export function cartDeliveryOptionsDiscountsGenerateRun(
     return {operations: []};
   }
 
+  const message =
+    discountPercent === 100
+      ? "VIP Customer Reward"
+      : `${discountPercent}% off shipping`;
+
   return {
     operations: [
       {
         deliveryDiscountsAdd: {
           candidates: [
             {
-              message:
-                discountPercent === 100
-                  ? "VIP Customer Reward"
-                  : `${discountPercent}% off shipping`,
+              message,
               targets: [
                 {
                   deliveryGroup: {
