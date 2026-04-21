@@ -33,7 +33,7 @@ export function cartDeliveryOptionsTransformRun(input) {
       if (!option.title) continue;
 
       // Replicar behavior del Script: renombrar si incluye "Standard Shipping"
-      if (option.title.includes("usa prop")) {
+      if (option.title.includes("Standard Shipping")) {
         operations.push({
           deliveryOptionRename: {
             deliveryOptionHandle: option.handle,

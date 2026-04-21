@@ -24,4 +24,3 @@ description = "t:description"
 [[extensions.metafields]]
 namespace = "$app"
 key = "free-shipping-activist-level"
-
