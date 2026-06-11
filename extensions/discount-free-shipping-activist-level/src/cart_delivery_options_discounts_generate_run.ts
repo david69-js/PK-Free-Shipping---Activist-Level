@@ -17,11 +17,6 @@ type LoyaltyShippingConfig = {
 export function cartDeliveryOptionsDiscountsGenerateRun(
   input: DeliveryInput,
 ): CartDeliveryOptionsDiscountsGenerateRunResult {
-  const firstDeliveryGroup = input.cart.deliveryGroups[0];
-  if (!firstDeliveryGroup) {
-    return {operations: []};
-  }
-
   const metafield = input.discount.metafield;
   if (!metafield || !metafield.jsonValue) {
     return {operations: []};
@@ -34,7 +29,6 @@ export function cartDeliveryOptionsDiscountsGenerateRun(
   const hasTags = customer?.hasTags ?? [];
 
   const activeTag = hasTags.find(t => t.hasTag === true);
-
   if (!activeTag) {
     return {operations: []};
   }
@@ -51,27 +45,35 @@ export function cartDeliveryOptionsDiscountsGenerateRun(
       ? "VIP Customer Reward"
       : `${discountPercent}% off shipping`;
 
+  const candidates = input.cart.deliveryGroups.flatMap(group =>
+    group.deliveryOptions
+      .filter(option => option.title?.includes("Standard Shipping"))
+      .map(option => ({
+        message,
+        targets: [
+          {
+            deliveryOption: {
+              handle: option.handle,
+            },
+          },
+        ],
+        value: {
+          percentage: {
+            value: discountPercent,
+          },
+        },
+      })),
+  );
+
+  if (candidates.length === 0) {
+    return {operations: []};
+  }
+
   return {
     operations: [
       {
         deliveryDiscountsAdd: {
-          candidates: [
-            {
-              message,
-              targets: [
-                {
-                  deliveryGroup: {
-                    id: firstDeliveryGroup.id,
-                  },
-                },
-              ],
-              value: {
-                percentage: {
-                  value: discountPercent,
-                },
-              },
-            },
-          ],
+          candidates,
           selectionStrategy: DeliveryDiscountSelectionStrategy.All,
         },
       },
