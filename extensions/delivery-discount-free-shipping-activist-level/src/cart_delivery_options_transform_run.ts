@@ -28,7 +28,6 @@ export function cartDeliveryOptionsTransformRun(input) {
   const operations = [];
 
   for (const group of input.cart.deliveryGroups ?? []) {
-      console.log("GROUP", JSON.stringify(group));
     for (const option of group.deliveryOptions ?? []) {
       if (!option.title) continue;
 
