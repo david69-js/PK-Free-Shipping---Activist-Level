@@ -9,6 +9,9 @@ query Input {
       }
     }
     deliveryGroups {
+      deliveryAddress {
+        countryCode
+      }
       deliveryOptions {
         handle
         title
