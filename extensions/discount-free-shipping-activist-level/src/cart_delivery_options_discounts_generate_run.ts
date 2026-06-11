@@ -25,6 +25,13 @@ export function cartDeliveryOptionsDiscountsGenerateRun(
   const config = metafield.jsonValue as LoyaltyShippingConfig;
   const tiers = config.tiers ?? [];
 
+  const isUS = input.cart.deliveryGroups.some(
+    g => g.deliveryAddress?.countryCode === "US",
+  );
+  if (!isUS) {
+    return {operations: []};
+  }
+
   const customer = input.cart.buyerIdentity?.customer;
   const hasTags = customer?.hasTags ?? [];
 
@@ -42,12 +49,12 @@ export function cartDeliveryOptionsDiscountsGenerateRun(
 
   const message =
     discountPercent === 100
-      ? "VIP Customer Reward"
+      ? "FREE VIP GROUND SHIPPING (USPS Priority Express)"
       : `${discountPercent}% off shipping`;
 
   const candidates = input.cart.deliveryGroups.flatMap(group =>
     group.deliveryOptions
-      .filter(option => option.title?.includes("Standard Shipping"))
+      .filter(option => option.title?.includes("Standard Shipping") || option.title?.includes("FREE VIP GROUND SHIPPING"))
       .map(option => ({
         message,
         targets: [

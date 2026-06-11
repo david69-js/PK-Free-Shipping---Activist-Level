@@ -7,6 +7,9 @@ query Input {
     }
     deliveryGroups {
       id
+      deliveryAddress {
+        countryCode
+      }
       deliveryOptions {
         handle
         title
@@ -15,7 +18,7 @@ query Input {
         }
       }
     }
-   buyerIdentity {
+    buyerIdentity {
       customer {
         id
         hasTags(tags: [

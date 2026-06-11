@@ -12,6 +12,13 @@ const NO_CHANGES = {operations: []};
  * @returns {CartDeliveryOptionsTransformRunResult}
  */
 export function cartDeliveryOptionsTransformRun(input) {
+  const isUS = (input.cart?.deliveryGroups ?? []).some(
+    g => g.deliveryAddress?.countryCode === "US",
+  );
+  if (!isUS) {
+    return NO_CHANGES;
+  }
+
   const customer = input.cart?.buyerIdentity?.customer;
   const hasTags = customer?.hasTags ?? [];
 
@@ -32,7 +39,7 @@ export function cartDeliveryOptionsTransformRun(input) {
       if (!option.title) continue;
 
       // Replicar behavior del Script: renombrar si incluye "Standard Shipping"
-      if (option.title.includes("Standard Shipping")) {
+      if (option.title.includes("usa prop")) {
         operations.push({
           deliveryOptionRename: {
             deliveryOptionHandle: option.handle,
